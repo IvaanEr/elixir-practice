@@ -1,18 +1,28 @@
 defmodule HelloWorld do
   @moduledoc """
-  Documentation for `HelloWorld`.
+  `HelloWorld` is just the beginning of a great adventure with Elixir!
   """
 
   @doc """
-  Hello world.
+  Says hello to the world!
 
   ## Examples
-
       iex> HelloWorld.hello()
-      :world
+      "Hello World!"
 
   """
   def hello do
-    :world
+    "Hello World!"
+  end
+
+  @doc """
+  Says goodbye, terminator style.
+
+  ## Examples
+      iex> HelloWorld.goodbye()
+      "Hasta la vista, baby!"
+  """
+  def goodbye do
+    "Hasta la vista, baby!"
   end
 end
