@@ -8,8 +8,7 @@ defmodule EnumOperations do
   """
   @spec count([any]) :: non_neg_integer
   def count([]), do: 0
-  def count([_n|tail]), do: 1 + count(tail)
-
+  def count([_n | tail]), do: 1 + count(tail)
 
   @doc """
   Return the list in reverse order
@@ -17,16 +16,17 @@ defmodule EnumOperations do
   def reverse(list), do: doReverse(list, [])
 
   defp doReverse([], acumm), do: acumm
-  defp doReverse([x|xs], acumm), do: doReverse(xs, acumm) ++ [x|acumm]
+  defp doReverse([x | xs], acumm), do: doReverse(xs, acumm) ++ [x | acumm]
 
   @doc """
   Return the list of elements that satisfy the given predicate
   """
   def filter([], _pred), do: []
-  def filter([x|xs], pred) do
+
+  def filter([x | xs], pred) do
     case pred.(x) do
       true -> [x | filter(xs, pred)]
-      false -> filter xs, pred
+      false -> filter(xs, pred)
     end
   end
 
@@ -34,6 +34,6 @@ defmodule EnumOperations do
   Given a list of lists, concatenates the lists into a single list
   """
   def concat([]), do: []
-  def concat([[]|ys]), do: concat ys
-  def concat([[x|xs]|yss]), do: [x | concat [xs|yss]]
+  def concat([[] | ys]), do: concat(ys)
+  def concat([[x | xs] | yss]), do: [x | concat([xs | yss])]
 end
