@@ -13,8 +13,7 @@ defmodule Truco do
   @points2game 3
 
   @doc """
-    Call this function to start the game.
-    It ask your name and starts the game
+    Call this function to start the game
   """
   def main do
     IO.puts("Welcome!")
@@ -36,25 +35,32 @@ defmodule Truco do
       ([%Player{name: name, user?: true}] ++ players)
       |> Enum.chunk_every(div(n_players, 2))
 
-
-
     players_a = Enum.zip(Enum.to_list(Range.new(1, length players_a)), players_a)
-    players_b = Enum.zip(Enum.to_list(Range.new(1, length players_a)), players_b)
+    players_b = Enum.zip(Enum.to_list(Range.new(1, length players_b)), players_b)
 
     # Build the teams
     team_a = %Team{players: players_a, turn: 1}
+    IO.puts(IO.ANSI.blue() <> "\nTeam A: ")
+    Enum.each(players_a, fn {_,%Player{name: n}} -> IO.puts("-> #{n}") end)
+    IO.puts(IO.ANSI.reset())
+
     team_b = %Team{players: players_b, turn: 1}
+    IO.puts(IO.ANSI.red() <> "\nTeam B: ")
+    Enum.each(players_b , fn {_,%Player{name: n}} -> IO.puts("-> #{n}") end)
+    IO.puts(IO.ANSI.reset())
 
     turn = Enum.random([:team_a, :team_b])
 
+    IO.puts("")
     %Game{n_players: n_players, team_a: team_a, team_b: team_b, turn: turn}
                           |> deal
                           |> play(n_players)
-                          |> check_round
-                          # |> IO.inspect
-                          |> check_hand
-                          # |> check_game
+                          |> check_round()
+                          |> check_hand()
+                          |> check_game
+    :ok
   end
+
 
   @spec deal(Truco.Game.t()) :: Truco.Game.t()
   defp deal(%Game{n_players: n, team_a: ta, team_b: tb}=game) do
@@ -69,106 +75,100 @@ defmodule Truco do
     pa = set_cards(pa, Enum.take(hands, div(n, 2)))
     pb = set_cards(pb, Enum.take(Enum.drop(hands, div(n, 2)), div(n, 2)))
 
-    %Game{game|team_a: %Team{ta | players: pa}, team_b: %Team{tb | players: pb}}
+    %Game{game|team_a: %Team{ta | players: pa, hand_score: 0}, team_b: %Team{tb | players: pb, hand_score: 0}}
   end
 
   @spec play(Truco.Game.t(), non_neg_integer()) :: Truco.Game.t()
-  def play(game, 0) do
-    IO.inspect(game)
+  defp play(game, 0) do
     game
   end
-  def play(%Game{turn: :team_a, team_a: ta} = game, rest) do
-    IO.inspect("turno team_a")
+  defp play(%Game{turn: :team_a, team_a: ta} = game, rest) do
+
     ta = Teams.play_card_by_turn(ta)
+    |> Teams.change_turn()
+
     %Game{game | team_a: ta, turn: :team_b}
     |> play(rest - 1)
   end
-  def play(%Game{turn: :team_b, team_b: tb} = game, rest) do
-    IO.inspect("turno team_b")
+  defp play(%Game{turn: :team_b, team_b: tb} = game, rest) do
 
     tb = Teams.play_card_by_turn(tb)
     |> Teams.change_turn()
 
-    %Game{game | team_a: tb, turn: :team_a}
+    %Game{game | team_b: tb, turn: :team_a}
     |> play(rest - 1)
   end
 
-  def check_round(%Game{team_a: ta, team_b: tb} = game) do
+  defp check_round(%Game{team_a: ta, team_b: tb} = game) do
     %Team{players: pa, hand_score: handScoreA} = ta
     %Team{players: pb, hand_score: handScoreB} = tb
     {newA, newB} = cond do
       Players.lowest_truco_value(pa) < Players.lowest_truco_value(pb) ->
+        IO.puts(IO.ANSI.blue() <> "Team A wins this round (#{handScoreA + 1} - #{handScoreB})\n" <> IO.ANSI.reset())
         {handScoreA + 1, handScoreB}
       Players.lowest_truco_value(pa) > Players.lowest_truco_value(pb) ->
+        IO.puts(IO.ANSI.red() <> "Team B wins this round (#{handScoreA} - #{handScoreB + 1} )\n" <> IO.ANSI.reset())
         {handScoreA, handScoreB + 1}
-      true -> {handScoreA, handScoreB}
+      true ->
+        IO.puts("Tie! (#{handScoreA} - #{handScoreB + 1} )\n")
+        {handScoreA, handScoreB}
     end
-    ta = %Team{ta | hand_score: newA}
-    tb = %Team{tb | hand_score: newB}
+
+    ta = %Team{ta | players: Enum.map(pa, fn {id, p} -> {id, Players.unselect_card p} end), hand_score: newA}
+    tb = %Team{tb | players: Enum.map(pb, fn {id, p} -> {id, Players.unselect_card p} end), hand_score: newB}
     %Game{game | team_a: ta, team_b: tb}
   end
 
-  def check_hand(%Game{score_a: sa, score_b: sb, team_a: ta, team_b: tb} = game) do
+  defp check_hand(%Game{score_a: sa, score_b: sb, team_a: ta, team_b: tb} = game) do
     %Team{players: pa, hand_score: handScoreA} = ta
     %Team{players: pb, hand_score: handScoreB} = tb
 
-    {newA, newB} = cond do
+    {deal?, newA, newB} = cond do
       handScoreA == 2 and handScoreB == 0 ->
-        {sa + 1, sb}
+        {true, sa + 1, sb}
       handScoreA == 0 and handScoreB == 2 ->
-        {sa, sb + 1}
+        {true, sa, sb + 1}
       Players.all_played?(pa) && Players.all_played?(pb) ->
         cond do
           handScoreA > handScoreB ->
-            {sa + 1, sb}
+            {true, sa + 1, sb}
           handScoreA < handScoreB ->
-            {sa, sb + 1}
-          true -> {sa, sb}
+            {true, sa, sb + 1}
+          true -> {true, sa, sb}
         end
       true ->
-        {sa, sb}
-    end
-    %Game{game| score_a: newA, score_b: newB}
+        {false, sa, sb}
     end
 
-  #   case status do
-  #     :finish ->
-  #       newPlayersA = Enum.map(pa, fn {id, p} -> {id, Players.unselect_card(p)
-  #                                                 |> Players.reset_hand} end)
-  #       newPlayersB = Enum.map(pa, fn {id, p} -> {id, Players.unselect_card(p)
-  #                                                 |> Players.reset_hand} end)
-  #       ta = %Team{ta | players: newPlayersA, hand_score: newHandScoreA}
-  #       tb = %Team{tb | players: newPlayersB, hand_score: newHandScoreB}
-  #       %Game{game | team_a: ta, team_b: tb}
-  #     :continue ->
-  #       IO.inspect("Continue!")
-  #       ta = %Team{ta | hand_score: newHandScoreA}
-  #       tb = %Team{tb | hand_score: newHandScoreB}
-  #       %Game{game | team_a: ta, team_b: tb}
-  #   end
-  # end
+    case deal? do
+      true -> IO.puts(IO.ANSI.cyan() <> "\n>>>> Team A: #{Integer.to_string(newA)} - Team B: #{Integer.to_string(newB)} <<<<\n" <> IO.ANSI.reset())
+              %Game{game | score_a: newA, score_b: newB}
+              |> deal()
+      false -> %Game{game | score_a: newA, score_b: newB}
+    end
+    end
 
-  def do_check_hand(%Game{team_a: ta, team_b: tb}) do
-    %Team{players: pa, hand_score: handScoreA} = ta
-    %Team{players: pb, hand_score: handScoreB} = tb
+
+  defp check_game(%Game{score_a: sa, score_b: sb, team_a: ta, team_b: tb} = game) do
+
     cond do
-      Players.lowest_truco_value(pa) < Players.lowest_truco_value(pb) ->
-        {:finish, handScoreA + 1, handScoreB}
-      Players.lowest_truco_value(pa) > Players.lowest_truco_value(pb) ->
-        {:finish, handScoreA, handScoreB + 1}
-      true -> {:finish, handScoreA, handScoreB}
+      sa >= @points2game ->
+        "Team A wins!"
+      sb >= @points2game ->
+        "Team B wins!"
+      true ->
+        repeat(game)
     end
   end
 
-  def check_game(%Game{} = game) do
-    {:continue, game}
+  defp repeat(%Game{n_players: n_players}=game) do
+    game
+    |> play(n_players)
+    |> check_round()
+    |> check_hand()
+    |> check_game()
   end
 
-
-
-  @doc """
-    Implements IO.gets with `promt` until the value is member of the `list`
-  """
   defp gets_number_in(promt, list) do
     str =
       IO.gets(promt)
@@ -187,13 +187,8 @@ defmodule Truco do
     end
   end
 
-  @doc """
-  Set cards for all the players.
-  """
   defp set_cards(players, cardss) do
     Enum.zip(players, cardss)
     |> Enum.map(fn {{id, player}, cards} -> {id, Players.receive_hand(player, cards)} end)
   end
-
-
 end

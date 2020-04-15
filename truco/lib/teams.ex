@@ -4,15 +4,21 @@ defmodule Truco.Teams do
   change team turn, etc
   """
   alias Truco.Team
-  alias Truco.Player
+  import Truco.Player
   alias Truco.Players
 
   @doc """
   Change the turn from one player to another, in the same team.
 
   ### Example
-    iex> change_turn(%Team{turn: 1, players: [%Player{name: "p1"}, %Player{name: "p2"}]})
-    %Team{turn: 2}
+    iex> Teams.change_turn(%Team{turn: 1, players: [%Player{name: "p1"}, %Player{name: "p2"}]})
+    %Team{turn: 2, players: [%Player{name: "p1"}, %Player{name: "p2"}]}
+
+    iex> Teams.change_turn(%Team{turn: 2, players: [%Player{name: "p1"}, %Player{name: "p2"}]})
+    %Team{turn: 1, players: [%Player{name: "p1"}, %Player{name: "p2"}]}
+
+    iex> Teams.change_turn(%Team{turn: 3, players: [%Player{name: "p1"}, %Player{name: "p2"}, %Player{name: "p3"}]})
+    %Team{turn: 1, players: [%Player{name: "p1"}, %Player{name: "p2"}, %Player{name: "p3"}]}
   """
   def change_turn(%Team{turn: turn, players: players} = team) do
     turn = case rem turn+1, (length(players)) do
@@ -23,15 +29,8 @@ defmodule Truco.Teams do
   end
 
   @doc """
-  Update team hand_score
-  """
-
-  def update_handscore(%Team{hand_score: hs} = team) do
-    %Team{team | hand_score: hs + 1}
-  end
-
-  @doc """
-  Select a player to play a card by turn
+  Select a player to play a card by turn. And play a turn
+  TODO: This must be two separate functions
   """
   def play_card_by_turn(%Team{players: players, turn: turn} = team) do
     # Search the player in team_a who has to play

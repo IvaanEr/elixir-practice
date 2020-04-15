@@ -1,6 +1,9 @@
 defmodule Truco.Deck do
   alias Truco.Card
 
+  @doc """
+  Creates a new deck of cards
+  """
   def create_deck do
     values = [1, 2, 3, 4, 5, 6, 7, 10, 11, 12]
     suits = ["Espada", "Copa", "Oro", "Basto"]
@@ -10,18 +13,25 @@ defmodule Truco.Deck do
     end
   end
 
+  @doc """
+  Shuffle a deck of cards
+  """
   def shuffle(deck) do
     deck
     |> Enum.shuffle()
   end
 
+  @doc """
+  Return a list of lists with 3 cards each.
+  Each list represents a Truco hand.
+  """
   def deal(deck) do
       deck
       |> Enum.chunk_every(3)
   end
 
 
-  def truco_magic do
+  defp truco_magic do
     %{
       "1 de Espada" => 1,
       "1 de Basto" => 2,

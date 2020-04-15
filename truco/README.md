@@ -1,21 +1,63 @@
 # Truco
 
-**TODO: Add description**
+Simple Truco!
 
-## Installation
+It only represents the card game, without Truco or Envido.
+Your team mates and enemies always play the highest card.
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
-by adding `truco` to your list of dependencies in `mix.exs`:
+## Flow
+At a high level of abstraction the flow can be summarized in the following steps
 
-```elixir
-def deps do
-  [
-    {:truco, "~> 0.1.0"}
-  ]
-end
+```
+main() -> deal() -> play() -> check_round() -> check_hand() -> check_game()  -> [deal() | :ok]
+
+where
+  deal() deals the cards to the players
+  play() make every player select one card
+  check_round() check which team won the round of cards
+  check_hand() if the hand is over, check which team won the hand
+  check_game() check if the game is over (a game is over when a team reach 3 points)
+```
+```
+ +------+
+ | main |
+ +--+---+
+    |
+    |
+    v
+ +--+---+
+ | deal |<----------+
+ +--+---+           |
+    |               |
+    |               |
+    |               |
+ +--+---+           |
+ |play  |           |
+ +---+--+           |
+     |              |
+     |              |
++----v--------+     |
+| check_round |     |
+|             |     |
++---+---------+     |
+    |               |
+    |               |
++---v--------+      |
+| check_hand |      |
++----+-------+      |
+    |               |
+    |               |
++----v---------+    | 
+| check_game   |+---+
++--------------+
 ```
 
-Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
-and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at [https://hexdocs.pm/truco](https://hexdocs.pm/truco).
-
+## Play
+Start the game.
+After enter your name and select the number of players the game starts.
+```
+  iex> Truco.main
+  Welcome!
+  Enter your name: Jhon
+  How many players (2-4-6): 4
+```
