@@ -1,0 +1,9 @@
+{application,truco,
+             [{applications,[kernel,stdlib,elixir,logger]},
+              {description,"truco"},
+              {modules,['Elixir.Truco','Elixir.Truco.Card',
+                        'Elixir.Truco.Deck','Elixir.Truco.Game',
+                        'Elixir.Truco.Player','Elixir.Truco.Players',
+                        'Elixir.Truco.Team','Elixir.Truco.Teams']},
+              {registered,[]},
+              {vsn,"0.1.0"}]}.
