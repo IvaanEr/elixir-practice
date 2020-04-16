@@ -1,0 +1,3 @@
+/truco/.elixir_ls/*
+*.lock
+/.DS_Store/*
