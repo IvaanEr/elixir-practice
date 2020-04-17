@@ -1,0 +1,27 @@
+# The directory Mix will write compiled artifacts to.
+/truco/_build/
+
+# If you run "mix test --cover", coverage assets end up here.
+/truco/cover/
+
+# The directory Mix downloads your dependencies sources to.
+/truco/deps/
+
+# Where third-party dependencies like ExDoc output generated docs.
+/truco/doc/
+
+# Ignore .fetch files in case you like to edit your project deps locally.
+/truco/.fetch
+
+# If the VM crashes, it generates a dump, let's ignore it too.
+/truco/erl_crash.dump
+
+# Also ignore archive artifacts (built via "mix archive.build").
+/truco/*.ez
+
+# Ignore package tarball (built via "mix hex.build").
+/truco/truco-*.tar
+
+/truco/.elixir_ls/
+
+/truco/.vscode/
