@@ -1,9 +1,9 @@
 defmodule AwsHelper do
-@moduledoc """
-This module provides some functionalities to upload files to S3
-"""
+  @moduledoc """
+  This module provides some functionalities to upload files to S3
+  """
 
-@s3_bucket "elixir-trainings"
+  @s3_bucket "elixir-trainings"
 
   @doc """
     Upload a file to S3 on bucket @s3_bucket.
@@ -11,9 +11,12 @@ This module provides some functionalities to upload files to S3
   @spec upload(String.t()) :: :error | :ok
   def upload(file_path) do
     case get_file(file_path) do
-      {:ok, binary} -> upload_to_s3(binary, file_path)
-      {:error, err} -> IO.puts(err)
-                      :error
+      {:ok, binary} ->
+        upload_to_s3(binary, file_path)
+
+      {:error, err} ->
+        IO.puts(err)
+        :error
     end
   end
 
@@ -22,12 +25,13 @@ This module provides some functionalities to upload files to S3
   """
   @spec get(binary()) :: any() | :error
   def get(object) do
-    %{status_code: status, body: body} = ExAws.S3.get_object(@s3_bucket, object)
-    |> ExAws.request!()
+    %{status_code: status, body: body} =
+      ExAws.S3.get_object(@s3_bucket, object)
+      |> ExAws.request!()
 
     case status do
       200 -> body
-      _   -> :error
+      _ -> :error
     end
   end
 
@@ -41,13 +45,13 @@ This module provides some functionalities to upload files to S3
 
   @spec upload_to_s3(binary(), String.t()) :: :erro | :ok
   defp upload_to_s3(bin, path) do
-    %{status_code: status} = ExAws.S3.put_object(@s3_bucket, "ivan/#{path}", bin)
-                              |> ExAws.request!()
+    %{status_code: status} =
+      ExAws.S3.put_object(@s3_bucket, "ivan/#{path}", bin)
+      |> ExAws.request!()
+
     case status do
       200 -> :ok
-      _   -> :error
+      _ -> :error
     end
   end
-
-
 end

@@ -26,7 +26,7 @@ defmodule AwsHelper.MixProject do
       {:ex_aws_s3, "~> 2.0"},
       {:hackney, "~> 1.9"},
       {:jason, "~> 1.2"},
-      {:sweet_xml, "~> 0.6"},
+      {:sweet_xml, "~> 0.6"}
     ]
   end
 end
