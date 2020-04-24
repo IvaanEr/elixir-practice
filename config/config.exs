@@ -13,10 +13,10 @@ config :phinx,
 # Configures the endpoint
 config :phinx, PhinxWeb.Endpoint,
   url: [host: "localhost"],
-  secret_key_base: "0BPwbIfQGb36Q1B/RYdMZc+50ymZjTQ4b/TIUhBg2yDvWGLcvPO+WpzxWjwuriUh",
-  render_errors: [view: PhinxWeb.ErrorView, accepts: ~w(html json)],
+  secret_key_base: "SpbUfSwz7O55anNP0MVlxnzBU5DV0OLM9QNlDOlaRy9a+bL4VBd9UQNyT0i9u93d",
+  render_errors: [view: PhinxWeb.ErrorView, accepts: ~w(json)],
   pubsub: [name: Phinx.PubSub, adapter: Phoenix.PubSub.PG2],
-  live_view: [signing_salt: "zaypb85+"]
+  live_view: [signing_salt: "MM3PRgkb"]
 
 # Configures Elixir's Logger
 config :logger, :console,
