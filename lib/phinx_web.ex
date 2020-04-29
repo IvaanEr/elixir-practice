@@ -24,6 +24,8 @@ defmodule PhinxWeb do
       import Plug.Conn
       import PhinxWeb.Gettext
       alias PhinxWeb.Router.Helpers, as: Routes
+
+      action_fallback PhinxWeb.FallbackController
     end
   end
 

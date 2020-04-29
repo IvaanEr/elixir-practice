@@ -40,7 +40,8 @@ defmodule Phinx.MixProject do
       {:postgrex, ">= 0.0.0"},
       {:gettext, "~> 0.11"},
       {:jason, "~> 1.0"},
-      {:plug_cowboy, "~> 2.0"}
+      {:plug_cowboy, "~> 2.0"},
+      {:cloak_ecto, "~> 1.0.2"}
     ]
   end
 

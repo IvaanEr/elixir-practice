@@ -11,9 +11,10 @@ defmodule Phinx.Application do
       # Start the Ecto repository
       Phinx.Repo,
       # Start the endpoint when the application starts
-      PhinxWeb.Endpoint
+      PhinxWeb.Endpoint,
       # Starts a worker by calling: Phinx.Worker.start_link(arg)
       # {Phinx.Worker, arg},
+      Phinx.Vault
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

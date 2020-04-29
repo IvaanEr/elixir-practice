@@ -5,7 +5,10 @@ defmodule PhinxWeb.Router do
     plug :accepts, ["json"]
   end
 
-  scope "/api", PhinxWeb do
+  scope "/", PhinxWeb do
     pipe_through :api
+
+    resources "/users", UserController, except: [:new, :edit]
+    get "/users/:id/hack", UserController, :hack
   end
 end

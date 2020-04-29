@@ -1,4 +1,13 @@
-# Phinx
+# Phinx API
+
+Basic CRUD API for Users with _name_, _email_, and _password_.
+
+The _password_ is encrypted in the data store using [cloak_ecto](https://hexdocs.pm/cloak_ecto/readme.html).
+
+The _password_ can only be retrieved with the a GET /users/{id}/hack, otherwise is
+filtered by the user view.
+
+## Start
 
 To start your Phoenix server:
 
@@ -6,14 +15,48 @@ To start your Phoenix server:
   * Create and migrate your database with `mix ecto.setup`
   * Start Phoenix endpoint with `mix phx.server`
 
-Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
+## Test examples
 
-Ready to run in production? Please [check our deployment guides](https://hexdocs.pm/phoenix/deployment.html).
+```bash
+  curl --request POST \
+    --url http://localhost:4000/users \
+    --header 'content-type: application/json' \
+    --data '{
+    "user": {
+      "name": "Jhon Doe",
+      "email": "jhon.doe@example.com",
+      "password": "Alabama"
+    }
+  }'
+```
 
-## Learn more
+```bash
+  # Get all users
+  curl --request GET \
+    --url http://localhost:4000/users
 
-  * Official website: https://www.phoenixframework.org/
-  * Guides: https://hexdocs.pm/phoenix/overview.html
-  * Docs: https://hexdocs.pm/phoenix
-  * Forum: https://elixirforum.com/c/phoenix-forum
-  * Source: https://github.com/phoenixframework/phoenix
+  # Get user by id
+  curl --request GET \
+    --url http://localhost:4000/users/1
+
+  # Hack user
+  curl --request GET \
+  --url http://localhost:4000/users/1/hack
+```
+
+```bash
+  # Update user
+  curl --request PUT \
+    --url http://localhost:4000/users/1 \
+    --header 'content-type: application/json' \
+    --data '{
+    "user": {
+      "email": "nuevo@example.com",
+      "name": "Juan Perez"
+    }
+  }'
+
+  # Delete user
+  curl --request DELETE \
+    --url http://localhost:4000/users/1
+```
