@@ -8,10 +8,13 @@ defmodule Phinx.Application do
   def start(_type, _args) do
     # List all child processes to be supervised
     children = [
+
       # Start the Ecto repository
       Phinx.Repo,
       # Start the endpoint when the application starts
       PhinxWeb.Endpoint,
+      # Start the PubSub system
+      {Phoenix.PubSub, name: Phinx.PubSub},
       # Starts a worker by calling: Phinx.Worker.start_link(arg)
       # {Phinx.Worker, arg},
       Phinx.Vault
