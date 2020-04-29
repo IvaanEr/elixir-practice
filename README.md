@@ -7,6 +7,19 @@ The _password_ is encrypted in the data store using [cloak_ecto](https://hexdocs
 The _password_ can only be retrieved with the a GET /users/{id}/hack, otherwise is
 filtered by the user view.
 
+---
+## Important
+
+ Auth token needed this time!
+
+ Call the methods with the header _x-phinx-token: MY\_TOKEN_
+
+ And export HARDCODED_TOKEN variable with your token
+ ```bash
+ export HARDCODED_TOKEN=MY_TOKEN
+ ```
+---
+
 ## Start
 
 To start your Phoenix server:

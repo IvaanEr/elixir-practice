@@ -5,6 +5,9 @@ defmodule PhinxWeb.UserController do
   use PhinxWeb, :controller
 
   alias Phinx.Users
+
+  plug :authenticate
+
   def index(conn, _params) do
     users = Users.list()
     conn
@@ -50,4 +53,18 @@ defmodule PhinxWeb.UserController do
       |> render("hack.json", user: user)
     end
   end
+
+  defp authenticate(conn, _opts) do
+    tokens = conn
+    |> Plug.Conn.get_req_header("x-phinx-token")
+
+    if Enum.member?(tokens, System.get_env("HARDCODED_TOKEN")) do
+      conn
+    else
+      conn
+      |> send_resp(:unauthorized, "")
+    end
+
+  end
+
 end
